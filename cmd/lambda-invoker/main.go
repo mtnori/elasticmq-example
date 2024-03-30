@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"log"
-	"sync"
 )
 
 func doTask(ctx context.Context, queueURL string, client *sqs.Client, message *types.Message) error {
@@ -18,6 +17,10 @@ func doTask(ctx context.Context, queueURL string, client *sqs.Client, message *t
 		return ctx.Err()
 	default:
 	}
+
+	//log.Printf("Run Start: %v", *message.Body)
+	//
+	//time.Sleep(30 * time.Second)
 
 	log.Printf("Run Task: %v", *message.Body)
 
@@ -81,7 +84,7 @@ func main() {
 
 		log.Println("Polling...")
 
-		var wg sync.WaitGroup
+		//var wg sync.WaitGroup
 
 		// メッセージを処理する
 		for _, message := range result.Messages {
@@ -90,17 +93,17 @@ func main() {
 
 			// 子ゴルーチンを起動
 			semaphore <- struct{}{} // セマフォを取得。足りなければ、ここてブロックされる
-			wg.Add(1)
+			//wg.Add(1)
 
 			go func() {
 				defer func() {
-					wg.Done()
+					//wg.Done()
 					<-semaphore
 				}()
 				_ = doTask(ctx, queueURL, client, &message)
 			}()
 		}
 
-		wg.Wait()
+		//wg.Wait()
 	}
 }

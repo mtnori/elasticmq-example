@@ -25,10 +25,11 @@ services:
     volumes:
       - ./:/app
       - ~/.aws:/root/.aws:ro
-    entrypoint: [ "/app/cmd/lambda-invoker/main" ]
+    entrypoint: [ "bash", "/app/scripts/entrypoint.sh" ]
     networks:
       - sample-network
     depends_on: [
+      elasticmq,
       invoker-builder
     ]
 

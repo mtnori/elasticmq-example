@@ -1,5 +1,7 @@
 #!/bin/bash
 
+yum install -y procps
+
 # バイナリのパス
 binary_path="/app/cmd/lambda-invoker/main"
 
@@ -23,8 +25,10 @@ while true; do
     # バイナリのハッシュ値が変更されたかどうかをチェック
     if [ "$initial_hash" != "$current_hash" ]; then
         echo "Binary updated, restarting myapp..."
-        # myappを再起動
-        pkill -f myapp
+        # myappを終了するためのPIDを取得
+        pid=$(ps aux | grep "$binary_path" | grep -v grep | awk '{print $2}')
+        # myappを終了
+        kill "$pid"
         "$binary_path" &
         # バイナリのハッシュ値を更新
         initial_hash="$current_hash"

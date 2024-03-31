@@ -40,7 +40,7 @@ func doTask(ctx context.Context, queueURL string, client *sqs.Client, message *t
 }
 
 func main() {
-	log.Println("Start")
+	log.Println("Start999")
 
 	ctx := context.Background()
 
